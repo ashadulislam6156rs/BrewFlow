@@ -604,6 +604,8 @@ model Branch {
 
   auditLogs       AuditLog[]
 
+  carts           Cart[]
+
   @@unique([organizationId, code])
   @@unique([organizationId, slug])
   @@index([organizationId, status])
@@ -951,7 +953,7 @@ model SocialLink {
   platform       SocialPlatform
   label          String?
   url            String         @db.Text
-  icon            String?
+  icon           String?
 
   sortOrder      Int            @default(0)
   isActive       Boolean        @default(true)
@@ -1082,6 +1084,12 @@ model Product {
 
   sortOrder      Int           @default(0)
 
+  // Engagement counters (denormalized for performance)
+  viewCount      Int           @default(0)
+  likeCount      Int           @default(0)
+  commentCount   Int           @default(0)
+  shareCount     Int           @default(0)
+
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
@@ -1113,6 +1121,12 @@ model Product {
 
   orderItems     OrderItem[]
   reviews        ProductReview[]
+
+  cartItems      CartItem[]
+
+  likes          ProductLike[]
+  comments       ProductComment[]
+  shares         ProductShare[]
 
   @@unique([organizationId, slug])
   @@unique([organizationId, sku])
@@ -1174,6 +1188,7 @@ model ProductVariant {
 
   recipes        Recipe[]
   orderItems     OrderItem[]
+  cartItems      CartItem[]
 
   @@unique([productId, sku])
   @@index([productId, isActive])
@@ -1291,6 +1306,93 @@ model ProductModifierGroup {
 
 /*
 |--------------------------------------------------------------------------
+| PRODUCT ENGAGEMENT (Like / Comment / Share)
+|--------------------------------------------------------------------------
+*/
+
+model ProductLike {
+  id          String   @id @default(cuid())
+  productId   String
+  customerId  String
+
+  createdAt   DateTime @default(now())
+
+  product     Product  @relation(
+    fields: [productId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  customer    Customer @relation(
+    fields: [customerId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  @@unique([productId, customerId])
+  @@index([productId])
+  @@index([customerId])
+}
+
+model ProductComment {
+  id          String       @id @default(cuid())
+  productId   String
+  customerId  String
+  parentId    String?      // nested reply support
+
+  content     String       @db.Text
+  status      ReviewStatus @default(PENDING)
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  product     Product  @relation(
+    fields: [productId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  customer    Customer @relation(
+    fields: [customerId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  parent      ProductComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies     ProductComment[] @relation("CommentReplies")
+
+  @@index([productId, createdAt])
+  @@index([customerId])
+  @@index([parentId])
+}
+
+model ProductShare {
+  id          String          @id @default(cuid())
+  productId   String
+  customerId  String?         // guest share allowed
+
+  platform    SocialPlatform?
+  sharedAt    DateTime        @default(now())
+
+  product     Product  @relation(
+    fields: [productId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  customer    Customer? @relation(
+    fields: [customerId],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  @@index([productId])
+  @@index([customerId])
+  @@index([sharedAt])
+}
+
+/*
+|--------------------------------------------------------------------------
 | UNITS / INVENTORY
 |--------------------------------------------------------------------------
 */
@@ -1308,6 +1410,9 @@ model Unit {
   recipeItems     RecipeIngredient[]
   purchaseItems   PurchaseOrderItem[]
   receiptItems    GoodsReceiptItem[]
+
+  fromConversions UnitConversion[] @relation("FromUnit")
+  toConversions   UnitConversion[] @relation("ToUnit")
 }
 
 model UnitConversion {
@@ -1621,7 +1726,7 @@ model PurchaseOrder {
   expectedDate   DateTime?
 
   subtotal       Decimal              @default(0) @db.Decimal(18, 2)
-  discount      Decimal              @default(0) @db.Decimal(18, 2)
+  discount       Decimal              @default(0) @db.Decimal(18, 2)
   tax            Decimal              @default(0) @db.Decimal(18, 2)
   total          Decimal              @default(0) @db.Decimal(18, 2)
 
@@ -1961,6 +2066,10 @@ model Customer {
 
   carts          Cart[]
 
+  likes          ProductLike[]
+  comments       ProductComment[]
+  shares         ProductShare[]
+
   @@unique([organizationId, customerCode])
   @@index([organizationId, phone])
   @@index([organizationId, email])
@@ -2016,7 +2125,7 @@ model DeliveryZone {
   description    String?
 
   deliveryFee    Decimal  @default(0) @db.Decimal(18, 2)
-  minimumOrder  Decimal  @default(0) @db.Decimal(18, 2)
+  minimumOrder   Decimal  @default(0) @db.Decimal(18, 2)
 
   estimatedMin   Int?
   estimatedMax   Int?
@@ -2089,7 +2198,7 @@ model Delivery {
   assignedAt      DateTime?
   pickedUpAt      DateTime?
   outForDeliveryAt DateTime?
-  deliveredAt    DateTime?
+  deliveredAt     DateTime?
 
   failureReason   String?        @db.Text
 
@@ -2365,29 +2474,29 @@ model Order {
 
   createdById     String?
 
-  confirmedAt    DateTime?
-  preparingAt    DateTime?
-  readyAt        DateTime?
-  deliveredAt    DateTime?
-  completedAt    DateTime?
-  cancelledAt    DateTime?
+  confirmedAt     DateTime?
+  preparingAt     DateTime?
+  readyAt         DateTime?
+  deliveredAt     DateTime?
+  completedAt     DateTime?
+  cancelledAt     DateTime?
 
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
 
-  organization   Organization @relation(
+  organization    Organization @relation(
     fields: [organizationId],
     references: [id],
     onDelete: Cascade
   )
 
-  branch         Branch @relation(
+  branch          Branch @relation(
     fields: [branchId],
     references: [id],
     onDelete: Restrict
   )
 
-  customer       Customer? @relation(
+  customer        Customer? @relation(
     fields: [customerId],
     references: [id],
     onDelete: SetNull
@@ -2399,32 +2508,32 @@ model Order {
     onDelete: SetNull
   )
 
-  table          DiningTable? @relation(
+  table           DiningTable? @relation(
     fields: [tableId],
     references: [id],
     onDelete: SetNull
   )
 
-  createdBy      User? @relation(
+  createdBy       User? @relation(
     "OrderCreatedBy",
     fields: [createdById],
     references: [id],
     onDelete: SetNull
   )
 
-  items          OrderItem[]
-  payments       OrderPayment[]
-  refunds        Refund[]
+  items           OrderItem[]
+  payments        OrderPayment[]
+  refunds         Refund[]
 
-  statusHistory  OrderStatusHistory[]
+  statusHistory   OrderStatusHistory[]
 
-  delivery       Delivery?
+  delivery        Delivery?
 
-  kitchenTickets KitchenTicket[]
+  kitchenTickets  KitchenTicket[]
 
-  invoice        SalesInvoice?
+  invoice         SalesInvoice?
 
-  review         ProductReview[]
+  review          ProductReview[]
 
   @@unique([organizationId, orderNo])
   @@index([branchId, status, createdAt])
@@ -2520,7 +2629,7 @@ model OrderStatusHistory {
 
   note        String?     @db.Text
 
-  changedById  String?
+  changedById String?
   createdAt   DateTime    @default(now())
 
   order       Order @relation(
