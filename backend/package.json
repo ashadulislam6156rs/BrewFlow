@@ -10,20 +10,6 @@
   "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "dependencies": {
-    "@prisma/client": "^7.10.0",
-    "bcryptjs": "^3.0.3",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "helmet": "^8.3.0",
-    "ioredis": "^6.0.0",
-    "jsonwebtoken": "^9.0.3",
-    "prisma": "^8.0.0-rc.15",
-    "socket.io": "^4.8.3",
-    "zod": "^4.6.5"
-  },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.10",
@@ -31,8 +17,17 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.20.3",
-    "nodemon": "^3.1.14",
+    "prisma": "^7.10.0",
     "tsx": "^4.23.13",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@prisma/adapter-mariadb": "^7.10.0",
+    "@prisma/client": "^7.10.0",
+    "bcryptjs": "^3.0.3",
+    "ioredis": "^6.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "socket.io": "^4.8.3",
+    "zod": "^4.6.5"
   }
 }

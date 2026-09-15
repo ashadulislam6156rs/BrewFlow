@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
 /*
@@ -454,12 +453,7 @@ model Organization {
   status            RecordStatus @default(ACTIVE)
 
   logoAssetId       String?      @unique
-  logoAsset         CloudinaryAsset? @relation(
-    "OrganizationLogo",
-    fields: [logoAssetId],
-    references: [id],
-    onDelete: SetNull
-  )
+  logoAsset         CloudinaryAsset? @relation("OrganizationLogo", fields: [logoAssetId], references: [id], onDelete: SetNull)
 
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
@@ -521,8 +515,6 @@ model Organization {
   notifications     Notification[]
   auditLogs         AuditLog[]
 
-  createdAtIndex    DateTime? // intentionally nullable for migration-safe indexing
-
   @@index([status])
   @@index([createdAt])
 }
@@ -559,21 +551,12 @@ model Branch {
   status          BranchStatus @default(ACTIVE)
 
   imageAssetId    String?
-  imageAsset      CloudinaryAsset? @relation(
-    "BranchImage",
-    fields: [imageAssetId],
-    references: [id],
-    onDelete: SetNull
-  )
+  imageAsset      CloudinaryAsset? @relation("BranchImage", fields: [imageAssetId], references: [id], onDelete: SetNull)
 
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
 
-  organization    Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   userBranches    UserBranch[]
   productBranches ProductBranch[]
@@ -630,12 +613,7 @@ model User {
   status          UserStatus @default(ACTIVE)
 
   avatarAssetId   String?
-  avatarAsset     CloudinaryAsset? @relation(
-    "UserAvatar",
-    fields: [avatarAssetId],
-    references: [id],
-    onDelete: SetNull
-  )
+  avatarAsset     CloudinaryAsset? @relation("UserAvatar", fields: [avatarAssetId], references: [id], onDelete: SetNull)
 
   lastLoginAt     DateTime?
   emailVerifiedAt DateTime?
@@ -643,11 +621,7 @@ model User {
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 
-  organization    Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   roles           UserRole[]
   branches        UserBranch[]
@@ -694,11 +668,7 @@ model Role {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  organization   Organization? @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   users           UserRole[]
   permissions     RolePermission[]
@@ -726,17 +696,9 @@ model UserRole {
 
   createdAt DateTime @default(now())
 
-  user      User @relation(
-    fields: [userId],
-    references: [id],
-    onDelete: Cascade
-  )
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  role      Role @relation(
-    fields: [roleId],
-    references: [id],
-    onDelete: Cascade
-  )
+  role      Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@unique([userId, roleId])
   @@index([roleId])
@@ -747,17 +709,9 @@ model RolePermission {
   roleId       String
   permissionId String
 
-  role         Role @relation(
-    fields: [roleId],
-    references: [id],
-    onDelete: Cascade
-  )
+  role         Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
-  permission   Permission @relation(
-    fields: [permissionId],
-    references: [id],
-    onDelete: Cascade
-  )
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
 
   @@unique([roleId, permissionId])
   @@index([permissionId])
@@ -771,17 +725,9 @@ model UserBranch {
 
   createdAt DateTime @default(now())
 
-  user      User   @relation(
-    fields: [userId],
-    references: [id],
-    onDelete: Cascade
-  )
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  branch    Branch @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: Cascade
-  )
+  branch    Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
   @@unique([userId, branchId])
   @@index([branchId])
@@ -861,19 +807,9 @@ model Setting {
   logoAssetId       String?
   faviconAssetId    String?
 
-  logoAsset         CloudinaryAsset? @relation(
-    "SettingLogo",
-    fields: [logoAssetId],
-    references: [id],
-    onDelete: SetNull
-  )
+  logoAsset         CloudinaryAsset? @relation("SettingLogo", fields: [logoAssetId], references: [id], onDelete: SetNull)
 
-  faviconAsset      CloudinaryAsset? @relation(
-    "SettingFavicon",
-    fields: [faviconAssetId],
-    references: [id],
-    onDelete: SetNull
-  )
+  faviconAsset      CloudinaryAsset? @relation("SettingFavicon", fields: [faviconAssetId], references: [id], onDelete: SetNull)
 
   primaryColor      String?
   secondaryColor    String?
@@ -893,11 +829,7 @@ model Setting {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  organization      Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model ContactInfo {
@@ -917,11 +849,7 @@ model ContactInfo {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model FAQ {
@@ -937,11 +865,7 @@ model FAQ {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId, isPublished, sortOrder])
 }
@@ -961,11 +885,7 @@ model SocialLink {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId, platform])
 }
@@ -980,12 +900,7 @@ model SiteBanner {
   buttonUrl      String?
 
   imageAssetId   String?
-  imageAsset     CloudinaryAsset? @relation(
-    "SiteBannerImage",
-    fields: [imageAssetId],
-    references: [id],
-    onDelete: SetNull
-  )
+  imageAsset     CloudinaryAsset? @relation("SiteBannerImage", fields: [imageAssetId], references: [id], onDelete: SetNull)
 
   sortOrder      Int      @default(0)
   isActive       Boolean  @default(true)
@@ -996,11 +911,7 @@ model SiteBanner {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId, isActive, sortOrder])
 }
@@ -1021,12 +932,7 @@ model Category {
   description    String?      @db.Text
 
   imageAssetId   String?
-  imageAsset     CloudinaryAsset? @relation(
-    "CategoryImage",
-    fields: [imageAssetId],
-    references: [id],
-    onDelete: SetNull
-  )
+  imageAsset     CloudinaryAsset? @relation("CategoryImage", fields: [imageAssetId], references: [id], onDelete: SetNull)
 
   status         RecordStatus @default(ACTIVE)
   sortOrder      Int          @default(0)
@@ -1034,18 +940,9 @@ model Category {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  parent         Category? @relation(
-    "CategoryTree",
-    fields: [parentId],
-    references: [id],
-    onDelete: SetNull
-  )
+  parent         Category? @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
 
   children       Category[] @relation("CategoryTree")
 
@@ -1093,23 +990,11 @@ model Product {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  category       Category @relation(
-    fields: [categoryId],
-    references: [id],
-    onDelete: Restrict
-  )
+  category       Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
-  taxRate        TaxRate? @relation(
-    fields: [taxRateId],
-    references: [id],
-    onDelete: SetNull
-  )
+  taxRate        TaxRate? @relation(fields: [taxRateId], references: [id], onDelete: SetNull)
 
   images         ProductImage[]
   variants       ProductVariant[]
@@ -1146,17 +1031,9 @@ model ProductImage {
 
   createdAt   DateTime @default(now())
 
-  product     Product @relation(
-    fields: [productId],
-    references: [id],
-    onDelete: Cascade
-  )
+  product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  asset       CloudinaryAsset @relation(
-    fields: [assetId],
-    references: [id],
-    onDelete: Restrict
-  )
+  asset       CloudinaryAsset @relation(fields: [assetId], references: [id], onDelete: Restrict)
 
   @@unique([productId, assetId])
   @@index([productId, sortOrder])
@@ -1180,11 +1057,7 @@ model ProductVariant {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  product        Product @relation(
-    fields: [productId],
-    references: [id],
-    onDelete: Cascade
-  )
+  product        Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   recipes        Recipe[]
   orderItems     OrderItem[]
@@ -1212,17 +1085,9 @@ model ProductBranch {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  product        Product @relation(
-    fields: [productId],
-    references: [id],
-    onDelete: Cascade
-  )
+  product        Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  branch         Branch @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: Cascade
-  )
+  branch         Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
   @@unique([productId, branchId])
   @@index([branchId, isAvailable])
@@ -1246,11 +1111,7 @@ model ModifierGroup {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   modifiers      Modifier[]
   products       ProductModifierGroup[]
@@ -1271,11 +1132,7 @@ model Modifier {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  modifierGroup  ModifierGroup @relation(
-    fields: [modifierGroupId],
-    references: [id],
-    onDelete: Cascade
-  )
+  modifierGroup  ModifierGroup @relation(fields: [modifierGroupId], references: [id], onDelete: Cascade)
 
   orderItems      OrderItemModifier[]
 
@@ -1289,17 +1146,9 @@ model ProductModifierGroup {
 
   sortOrder      Int      @default(0)
 
-  product        Product @relation(
-    fields: [productId],
-    references: [id],
-    onDelete: Cascade
-  )
+  product        Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  modifierGroup  ModifierGroup @relation(
-    fields: [modifierGroupId],
-    references: [id],
-    onDelete: Cascade
-  )
+  modifierGroup  ModifierGroup @relation(fields: [modifierGroupId], references: [id], onDelete: Cascade)
 
   @@unique([productId, modifierGroupId])
 }
@@ -1317,17 +1166,9 @@ model ProductLike {
 
   createdAt   DateTime @default(now())
 
-  product     Product  @relation(
-    fields: [productId],
-    references: [id],
-    onDelete: Cascade
-  )
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  customer    Customer @relation(
-    fields: [customerId],
-    references: [id],
-    onDelete: Cascade
-  )
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   @@unique([productId, customerId])
   @@index([productId])
@@ -1346,17 +1187,9 @@ model ProductComment {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
-  product     Product  @relation(
-    fields: [productId],
-    references: [id],
-    onDelete: Cascade
-  )
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  customer    Customer @relation(
-    fields: [customerId],
-    references: [id],
-    onDelete: Cascade
-  )
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   parent      ProductComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies     ProductComment[] @relation("CommentReplies")
@@ -1374,17 +1207,9 @@ model ProductShare {
   platform    SocialPlatform?
   sharedAt    DateTime        @default(now())
 
-  product     Product  @relation(
-    fields: [productId],
-    references: [id],
-    onDelete: Cascade
-  )
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  customer    Customer? @relation(
-    fields: [customerId],
-    references: [id],
-    onDelete: SetNull
-  )
+  customer    Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
 
   @@index([productId])
   @@index([customerId])
@@ -1425,19 +1250,9 @@ model UnitConversion {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  fromUnit       Unit @relation(
-    "FromUnit",
-    fields: [fromUnitId],
-    references: [id],
-    onDelete: Cascade
-  )
+  fromUnit       Unit @relation("FromUnit", fields: [fromUnitId], references: [id], onDelete: Cascade)
 
-  toUnit         Unit @relation(
-    "ToUnit",
-    fields: [toUnitId],
-    references: [id],
-    onDelete: Cascade
-  )
+  toUnit         Unit @relation("ToUnit", fields: [toUnitId], references: [id], onDelete: Cascade)
 
   @@unique([fromUnitId, toUnitId])
 }
@@ -1465,17 +1280,9 @@ model InventoryItem {
   createdAt         DateTime               @default(now())
   updatedAt         DateTime               @updatedAt
 
-  organization      Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  unit              Unit @relation(
-    fields: [unitId],
-    references: [id],
-    onDelete: Restrict
-  )
+  unit              Unit @relation(fields: [unitId], references: [id], onDelete: Restrict)
 
   balances          InventoryBalance[]
   batches           InventoryBatch[]
@@ -1505,17 +1312,9 @@ model InventoryBalance {
 
   updatedAt       DateTime @updatedAt
 
-  branch          Branch @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: Cascade
-  )
+  branch          Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
-  inventoryItem   InventoryItem @relation(
-    fields: [inventoryItemId],
-    references: [id],
-    onDelete: Cascade
-  )
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id], onDelete: Cascade)
 
   @@unique([branchId, inventoryItemId])
   @@index([inventoryItemId])
@@ -1535,17 +1334,9 @@ model InventoryBatch {
 
   receivedAt      DateTime @default(now())
 
-  branch          Branch @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: Cascade
-  )
+  branch          Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
-  inventoryItem   InventoryItem @relation(
-    fields: [inventoryItemId],
-    references: [id],
-    onDelete: Cascade
-  )
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id], onDelete: Cascade)
 
   stockMovements  StockMovement[]
 
@@ -1574,23 +1365,11 @@ model StockMovement {
 
   createdAt       DateTime           @default(now())
 
-  branch          Branch @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: Cascade
-  )
+  branch          Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
-  inventoryItem   InventoryItem @relation(
-    fields: [inventoryItemId],
-    references: [id],
-    onDelete: Cascade
-  )
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id], onDelete: Cascade)
 
-  batch           InventoryBatch? @relation(
-    fields: [batchId],
-    references: [id],
-    onDelete: SetNull
-  )
+  batch           InventoryBatch? @relation(fields: [batchId], references: [id], onDelete: SetNull)
 
   @@index([branchId, inventoryItemId, createdAt])
   @@index([referenceType, referenceId])
@@ -1616,17 +1395,9 @@ model Recipe {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  product        Product @relation(
-    fields: [productId],
-    references: [id],
-    onDelete: Cascade
-  )
+  product        Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  variant        ProductVariant? @relation(
-    fields: [variantId],
-    references: [id],
-    onDelete: Cascade
-  )
+  variant        ProductVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
 
   ingredients    RecipeIngredient[]
 
@@ -1643,23 +1414,11 @@ model RecipeIngredient {
   quantity        Decimal  @db.Decimal(18, 6)
   wastagePercent  Decimal  @default(0) @db.Decimal(8, 4)
 
-  recipe          Recipe @relation(
-    fields: [recipeId],
-    references: [id],
-    onDelete: Cascade
-  )
+  recipe          Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
-  inventoryItem   InventoryItem @relation(
-    fields: [inventoryItemId],
-    references: [id],
-    onDelete: Restrict
-  )
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id], onDelete: Restrict)
 
-  unit            Unit @relation(
-    fields: [unitId],
-    references: [id],
-    onDelete: Restrict
-  )
+  unit            Unit @relation(fields: [unitId], references: [id], onDelete: Restrict)
 
   @@index([recipeId])
   @@index([inventoryItemId])
@@ -1696,11 +1455,7 @@ model Supplier {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   purchaseOrders PurchaseOrder[]
   goodsReceipts  GoodsReceipt[]
@@ -1738,37 +1493,15 @@ model PurchaseOrder {
   createdAt      DateTime             @default(now())
   updatedAt      DateTime             @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  branch         Branch @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: Restrict
-  )
+  branch         Branch @relation(fields: [branchId], references: [id], onDelete: Restrict)
 
-  supplier       Supplier @relation(
-    fields: [supplierId],
-    references: [id],
-    onDelete: Restrict
-  )
+  supplier       Supplier @relation(fields: [supplierId], references: [id], onDelete: Restrict)
 
-  createdBy      User @relation(
-    "PurchaseOrderCreatedBy",
-    fields: [createdById],
-    references: [id],
-    onDelete: Restrict
-  )
+  createdBy      User @relation("PurchaseOrderCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
 
-  approvedBy     User? @relation(
-    "PurchaseOrderApprovedBy",
-    fields: [approvedById],
-    references: [id],
-    onDelete: SetNull
-  )
+  approvedBy     User? @relation("PurchaseOrderApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
 
   items          PurchaseOrderItem[]
   goodsReceipts  GoodsReceipt[]
@@ -1792,23 +1525,11 @@ model PurchaseOrderItem {
   tax             Decimal  @default(0) @db.Decimal(18, 2)
   total           Decimal  @db.Decimal(18, 2)
 
-  purchaseOrder   PurchaseOrder @relation(
-    fields: [purchaseOrderId],
-    references: [id],
-    onDelete: Cascade
-  )
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
 
-  inventoryItem   InventoryItem @relation(
-    fields: [inventoryItemId],
-    references: [id],
-    onDelete: Restrict
-  )
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id], onDelete: Restrict)
 
-  unit            Unit @relation(
-    fields: [unitId],
-    references: [id],
-    onDelete: Restrict
-  )
+  unit            Unit @relation(fields: [unitId], references: [id], onDelete: Restrict)
 
   @@index([purchaseOrderId])
   @@index([inventoryItemId])
@@ -1833,36 +1554,15 @@ model GoodsReceipt {
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  branch         Branch @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: Restrict
-  )
+  branch         Branch @relation(fields: [branchId], references: [id], onDelete: Restrict)
 
-  supplier       Supplier @relation(
-    fields: [supplierId],
-    references: [id],
-    onDelete: Restrict
-  )
+  supplier       Supplier @relation(fields: [supplierId], references: [id], onDelete: Restrict)
 
-  purchaseOrder  PurchaseOrder? @relation(
-    fields: [purchaseOrderId],
-    references: [id],
-    onDelete: SetNull
-  )
+  purchaseOrder  PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id], onDelete: SetNull)
 
-  receivedBy     User @relation(
-    "GoodsReceiptReceivedBy",
-    fields: [receivedById],
-    references: [id],
-    onDelete: Restrict
-  )
+  receivedBy     User @relation("GoodsReceiptReceivedBy", fields: [receivedById], references: [id], onDelete: Restrict)
 
   items          GoodsReceiptItem[]
 
@@ -1883,23 +1583,11 @@ model GoodsReceiptItem {
   batchNumber     String?
   expiryDate      DateTime?
 
-  goodsReceipt    GoodsReceipt @relation(
-    fields: [goodsReceiptId],
-    references: [id],
-    onDelete: Cascade
-  )
+  goodsReceipt    GoodsReceipt @relation(fields: [goodsReceiptId], references: [id], onDelete: Cascade)
 
-  inventoryItem   InventoryItem @relation(
-    fields: [inventoryItemId],
-    references: [id],
-    onDelete: Restrict
-  )
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id], onDelete: Restrict)
 
-  unit            Unit @relation(
-    fields: [unitId],
-    references: [id],
-    onDelete: Restrict
-  )
+  unit            Unit @relation(fields: [unitId], references: [id], onDelete: Restrict)
 
   @@index([goodsReceiptId])
   @@index([inventoryItemId])
@@ -1937,53 +1625,19 @@ model StockTransfer {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  fromBranch     Branch @relation(
-    "TransferFromBranch",
-    fields: [fromBranchId],
-    references: [id],
-    onDelete: Restrict
-  )
+  fromBranch     Branch @relation("TransferFromBranch", fields: [fromBranchId], references: [id], onDelete: Restrict)
 
-  toBranch       Branch @relation(
-    "TransferToBranch",
-    fields: [toBranchId],
-    references: [id],
-    onDelete: Restrict
-  )
+  toBranch       Branch @relation("TransferToBranch", fields: [toBranchId], references: [id], onDelete: Restrict)
 
-  requestedBy    User @relation(
-    "TransferRequestedBy",
-    fields: [requestedById],
-    references: [id],
-    onDelete: Restrict
-  )
+  requestedBy    User @relation("TransferRequestedBy", fields: [requestedById], references: [id], onDelete: Restrict)
 
-  approvedBy     User? @relation(
-    "TransferApprovedBy",
-    fields: [approvedById],
-    references: [id],
-    onDelete: SetNull
-  )
+  approvedBy     User? @relation("TransferApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
 
-  shippedBy      User? @relation(
-    "TransferShippedBy",
-    fields: [shippedById],
-    references: [id],
-    onDelete: SetNull
-  )
+  shippedBy      User? @relation("TransferShippedBy", fields: [shippedById], references: [id], onDelete: SetNull)
 
-  receivedBy     User? @relation(
-    "TransferReceivedBy",
-    fields: [receivedById],
-    references: [id],
-    onDelete: SetNull
-  )
+  receivedBy     User? @relation("TransferReceivedBy", fields: [receivedById], references: [id], onDelete: SetNull)
 
   items          StockTransferItem[]
 
@@ -2001,17 +1655,9 @@ model StockTransferItem {
   receivedQuantity Decimal @default(0) @db.Decimal(18, 3)
   unitCost        Decimal  @default(0) @db.Decimal(18, 4)
 
-  stockTransfer   StockTransfer @relation(
-    fields: [stockTransferId],
-    references: [id],
-    onDelete: Cascade
-  )
+  stockTransfer   StockTransfer @relation(fields: [stockTransferId], references: [id], onDelete: Cascade)
 
-  inventoryItem   InventoryItem @relation(
-    fields: [inventoryItemId],
-    references: [id],
-    onDelete: Restrict
-  )
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id], onDelete: Restrict)
 
   @@index([stockTransferId])
   @@index([inventoryItemId])
@@ -2048,11 +1694,7 @@ model Customer {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   addresses      CustomerAddress[]
 
@@ -2069,6 +1711,9 @@ model Customer {
   likes          ProductLike[]
   comments       ProductComment[]
   shares         ProductShare[]
+
+  // ADD THIS LINE:
+  reservations   Reservation[]
 
   @@unique([organizationId, customerCode])
   @@index([organizationId, phone])
@@ -2099,11 +1744,7 @@ model CustomerAddress {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  customer       Customer @relation(
-    fields: [customerId],
-    references: [id],
-    onDelete: Cascade
-  )
+  customer       Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   orders         Order[]
 
@@ -2135,17 +1776,9 @@ model DeliveryZone {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  branch         Branch? @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: Cascade
-  )
+  branch         Branch? @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
   deliveries     Delivery[]
 
@@ -2166,11 +1799,7 @@ model RiderProfile {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
-  user        User @relation(
-    fields: [userId],
-    references: [id],
-    onDelete: Cascade
-  )
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   deliveries  Delivery[]
   assignments DeliveryAssignment[]
@@ -2205,23 +1834,11 @@ model Delivery {
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
-  order           Order @relation(
-    fields: [orderId],
-    references: [id],
-    onDelete: Cascade
-  )
+  order           Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  zone            DeliveryZone? @relation(
-    fields: [zoneId],
-    references: [id],
-    onDelete: SetNull
-  )
+  zone            DeliveryZone? @relation(fields: [zoneId], references: [id], onDelete: SetNull)
 
-  rider           RiderProfile? @relation(
-    fields: [riderId],
-    references: [id],
-    onDelete: SetNull
-  )
+  rider           RiderProfile? @relation(fields: [riderId], references: [id], onDelete: SetNull)
 
   assignments     DeliveryAssignment[]
 
@@ -2239,17 +1856,9 @@ model DeliveryAssignment {
 
   note        String?
 
-  delivery    Delivery @relation(
-    fields: [deliveryId],
-    references: [id],
-    onDelete: Cascade
-  )
+  delivery    Delivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
 
-  rider       RiderProfile @relation(
-    fields: [riderId],
-    references: [id],
-    onDelete: Restrict
-  )
+  rider       RiderProfile @relation(fields: [riderId], references: [id], onDelete: Restrict)
 
   @@index([deliveryId])
   @@index([riderId])
@@ -2278,17 +1887,9 @@ model DiningTable {
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  branch         Branch @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: Cascade
-  )
+  branch         Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
   orders         Order[]
   reservations   Reservation[]
@@ -2320,29 +1921,13 @@ model Reservation {
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  branch         Branch @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: Restrict
-  )
+  branch         Branch @relation(fields: [branchId], references: [id], onDelete: Restrict)
 
-  customer       Customer? @relation(
-    fields: [customerId],
-    references: [id],
-    onDelete: SetNull
-  )
+  customer       Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
 
-  table          DiningTable? @relation(
-    fields: [tableId],
-    references: [id],
-    onDelete: SetNull
-  )
+  table          DiningTable? @relation(fields: [tableId], references: [id], onDelete: SetNull)
 
   @@unique([organizationId, reservationNo])
   @@index([branchId, reservationAt])
@@ -2367,23 +1952,11 @@ model Cart {
   updatedAt      DateTime @updatedAt
   expiresAt      DateTime?
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  customer       Customer? @relation(
-    fields: [customerId],
-    references: [id],
-    onDelete: SetNull
-  )
+  customer       Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
 
-  branch         Branch? @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: SetNull
-  )
+  branch         Branch? @relation(fields: [branchId], references: [id], onDelete: SetNull)
 
   items          CartItem[]
 
@@ -2405,23 +1978,11 @@ model CartItem {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  cart        Cart @relation(
-    fields: [cartId],
-    references: [id],
-    onDelete: Cascade
-  )
+  cart        Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
 
-  product     Product @relation(
-    fields: [productId],
-    references: [id],
-    onDelete: Restrict
-  )
+  product     Product @relation(fields: [productId], references: [id], onDelete: Restrict)
 
-  variant     ProductVariant? @relation(
-    fields: [variantId],
-    references: [id],
-    onDelete: SetNull
-  )
+  variant     ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
 
   @@index([cartId])
   @@index([productId])
@@ -2484,42 +2045,17 @@ model Order {
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
 
-  organization    Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  branch          Branch @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: Restrict
-  )
+  branch          Branch @relation(fields: [branchId], references: [id], onDelete: Restrict)
 
-  customer        Customer? @relation(
-    fields: [customerId],
-    references: [id],
-    onDelete: SetNull
-  )
+  customer        Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
 
-  customerAddress CustomerAddress? @relation(
-    fields: [customerAddressId],
-    references: [id],
-    onDelete: SetNull
-  )
+  customerAddress CustomerAddress? @relation(fields: [customerAddressId], references: [id], onDelete: SetNull)
 
-  table           DiningTable? @relation(
-    fields: [tableId],
-    references: [id],
-    onDelete: SetNull
-  )
+  table           DiningTable? @relation(fields: [tableId], references: [id], onDelete: SetNull)
 
-  createdBy       User? @relation(
-    "OrderCreatedBy",
-    fields: [createdById],
-    references: [id],
-    onDelete: SetNull
-  )
+  createdBy       User? @relation("OrderCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
 
   items           OrderItem[]
   payments        OrderPayment[]
@@ -2567,23 +2103,11 @@ model OrderItem {
 
   createdAt       DateTime @default(now())
 
-  order           Order @relation(
-    fields: [orderId],
-    references: [id],
-    onDelete: Cascade
-  )
+  order           Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  product         Product @relation(
-    fields: [productId],
-    references: [id],
-    onDelete: Restrict
-  )
+  product         Product @relation(fields: [productId], references: [id], onDelete: Restrict)
 
-  variant         ProductVariant? @relation(
-    fields: [variantId],
-    references: [id],
-    onDelete: SetNull
-  )
+  variant         ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
 
   modifiers       OrderItemModifier[]
 
@@ -2604,17 +2128,9 @@ model OrderItemModifier {
   unitPrice    Decimal @default(0) @db.Decimal(18, 2)
   total        Decimal @default(0) @db.Decimal(18, 2)
 
-  orderItem    OrderItem @relation(
-    fields: [orderItemId],
-    references: [id],
-    onDelete: Cascade
-  )
+  orderItem    OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
 
-  modifier     Modifier @relation(
-    fields: [modifierId],
-    references: [id],
-    onDelete: Restrict
-  )
+  modifier     Modifier @relation(fields: [modifierId], references: [id], onDelete: Restrict)
 
   @@index([orderItemId])
   @@index([modifierId])
@@ -2632,18 +2148,9 @@ model OrderStatusHistory {
   changedById String?
   createdAt   DateTime    @default(now())
 
-  order       Order @relation(
-    fields: [orderId],
-    references: [id],
-    onDelete: Cascade
-  )
+  order       Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  changedBy   User? @relation(
-    "OrderStatusChangedBy",
-    fields: [changedById],
-    references: [id],
-    onDelete: SetNull
-  )
+  changedBy   User? @relation("OrderStatusChangedBy", fields: [changedById], references: [id], onDelete: SetNull)
 
   @@index([orderId, createdAt])
 }
@@ -2667,11 +2174,7 @@ model OrderPayment {
   createdAt       DateTime                @default(now())
   updatedAt       DateTime                @updatedAt
 
-  order           Order @relation(
-    fields: [orderId],
-    references: [id],
-    onDelete: Cascade
-  )
+  order           Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   @@index([orderId])
   @@index([transactionId])
@@ -2694,11 +2197,7 @@ model Refund {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  order          Order @relation(
-    fields: [orderId],
-    references: [id],
-    onDelete: Cascade
-  )
+  order          Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   items          RefundItem[]
 
@@ -2714,11 +2213,7 @@ model RefundItem {
   quantity    Decimal  @db.Decimal(18, 3)
   amount      Decimal  @db.Decimal(18, 2)
 
-  refund      Refund @relation(
-    fields: [refundId],
-    references: [id],
-    onDelete: Cascade
-  )
+  refund      Refund @relation(fields: [refundId], references: [id], onDelete: Cascade)
 
   @@index([refundId])
   @@index([orderItemId])
@@ -2743,17 +2238,9 @@ model KitchenStation {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  branch         Branch @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: Cascade
-  )
+  branch         Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
   tickets        KitchenTicket[]
 
@@ -2776,17 +2263,9 @@ model KitchenTicket {
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @updatedAt
 
-  order          Order @relation(
-    fields: [orderId],
-    references: [id],
-    onDelete: Cascade
-  )
+  order          Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  station        KitchenStation @relation(
-    fields: [stationId],
-    references: [id],
-    onDelete: Restrict
-  )
+  station        KitchenStation @relation(fields: [stationId], references: [id], onDelete: Restrict)
 
   items          KitchenTicketItem[]
 
@@ -2805,17 +2284,9 @@ model KitchenTicketItem {
   startedAt      DateTime?
   readyAt        DateTime?
 
-  kitchenTicket  KitchenTicket @relation(
-    fields: [kitchenTicketId],
-    references: [id],
-    onDelete: Cascade
-  )
+  kitchenTicket  KitchenTicket @relation(fields: [kitchenTicketId], references: [id], onDelete: Cascade)
 
-  orderItem      OrderItem @relation(
-    fields: [orderItemId],
-    references: [id],
-    onDelete: Cascade
-  )
+  orderItem      OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
 
   @@index([kitchenTicketId, status])
 }
@@ -2841,17 +2312,9 @@ model POSDevice {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  branch         Branch @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: Cascade
-  )
+  branch         Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
   shifts         POSShift[]
 
@@ -2881,37 +2344,15 @@ model POSShift {
 
   notes          String?        @db.Text
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  branch         Branch @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: Restrict
-  )
+  branch         Branch @relation(fields: [branchId], references: [id], onDelete: Restrict)
 
-  device         POSDevice? @relation(
-    fields: [deviceId],
-    references: [id],
-    onDelete: SetNull
-  )
+  device         POSDevice? @relation(fields: [deviceId], references: [id], onDelete: SetNull)
 
-  openedBy       User @relation(
-    "ShiftOpenedBy",
-    fields: [openedById],
-    references: [id],
-    onDelete: Restrict
-  )
+  openedBy       User @relation("ShiftOpenedBy", fields: [openedById], references: [id], onDelete: Restrict)
 
-  closedBy       User? @relation(
-    "ShiftClosedBy",
-    fields: [closedById],
-    references: [id],
-    onDelete: SetNull
-  )
+  closedBy       User? @relation("ShiftClosedBy", fields: [closedById], references: [id], onDelete: SetNull)
 
   cashTransactions CashTransaction[]
 
@@ -2931,11 +2372,7 @@ model CashTransaction {
 
   createdAt   DateTime            @default(now())
 
-  shift       POSShift @relation(
-    fields: [shiftId],
-    references: [id],
-    onDelete: Cascade
-  )
+  shift       POSShift @relation(fields: [shiftId], references: [id], onDelete: Cascade)
 
   @@index([shiftId, createdAt])
 }
@@ -2962,11 +2399,7 @@ model TaxRate {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   products       Product[]
 
@@ -2990,11 +2423,7 @@ model Discount {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId, isActive])
 }
@@ -3017,11 +2446,7 @@ model Promotion {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId, status])
 }
@@ -3052,11 +2477,7 @@ model Coupon {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   redemptions    CouponRedemption[]
 
@@ -3074,11 +2495,7 @@ model CouponRedemption {
 
   createdAt   DateTime @default(now())
 
-  coupon      Coupon @relation(
-    fields: [couponId],
-    references: [id],
-    onDelete: Restrict
-  )
+  coupon      Coupon @relation(fields: [couponId], references: [id], onDelete: Restrict)
 
   @@unique([couponId, orderId])
   @@index([customerId])
@@ -3105,11 +2522,7 @@ model LoyaltyProgram {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   accounts       LoyaltyAccount[]
 
@@ -3128,17 +2541,9 @@ model LoyaltyAccount {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  customer       Customer @relation(
-    fields: [customerId],
-    references: [id],
-    onDelete: Cascade
-  )
+  customer       Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  program        LoyaltyProgram @relation(
-    fields: [programId],
-    references: [id],
-    onDelete: Restrict
-  )
+  program        LoyaltyProgram @relation(fields: [programId], references: [id], onDelete: Restrict)
 
   transactions   LoyaltyTransaction[]
 
@@ -3159,11 +2564,7 @@ model LoyaltyTransaction {
 
   createdAt   DateTime              @default(now())
 
-  account     LoyaltyAccount @relation(
-    fields: [accountId],
-    references: [id],
-    onDelete: Cascade
-  )
+  account     LoyaltyAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   @@index([accountId, createdAt])
 }
@@ -3189,23 +2590,11 @@ model ProductReview {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  product        Product @relation(
-    fields: [productId],
-    references: [id],
-    onDelete: Cascade
-  )
+  product        Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  customer       Customer @relation(
-    fields: [customerId],
-    references: [id],
-    onDelete: Cascade
-  )
+  customer       Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  order          Order? @relation(
-    fields: [orderId],
-    references: [id],
-    onDelete: SetNull
-  )
+  order          Order? @relation(fields: [orderId], references: [id], onDelete: SetNull)
 
   @@index([productId, status])
   @@index([customerId])
@@ -3236,18 +2625,9 @@ model ChartOfAccount {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  parent         ChartOfAccount? @relation(
-    "AccountTree",
-    fields: [parentId],
-    references: [id],
-    onDelete: SetNull
-  )
+  parent         ChartOfAccount? @relation("AccountTree", fields: [parentId], references: [id], onDelete: SetNull)
 
   children       ChartOfAccount[] @relation("AccountTree")
 
@@ -3271,11 +2651,7 @@ model AccountingPeriod {
   createdAt      DateTime               @default(now())
   updatedAt      DateTime               @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   journalEntries JournalEntry[]
 
@@ -3305,30 +2681,13 @@ model JournalEntry {
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  branch         Branch? @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: SetNull
-  )
+  branch         Branch? @relation(fields: [branchId], references: [id], onDelete: SetNull)
 
-  period         AccountingPeriod @relation(
-    fields: [periodId],
-    references: [id],
-    onDelete: Restrict
-  )
+  period         AccountingPeriod @relation(fields: [periodId], references: [id], onDelete: Restrict)
 
-  createdBy      User @relation(
-    "JournalCreatedBy",
-    fields: [createdById],
-    references: [id],
-    onDelete: Restrict
-  )
+  createdBy      User @relation("JournalCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
 
   lines          JournalLine[]
 
@@ -3352,17 +2711,9 @@ model JournalLine {
   debit          Decimal  @default(0) @db.Decimal(18, 2)
   credit         Decimal  @default(0) @db.Decimal(18, 2)
 
-  journalEntry   JournalEntry @relation(
-    fields: [journalEntryId],
-    references: [id],
-    onDelete: Cascade
-  )
+  journalEntry   JournalEntry @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
 
-  account        ChartOfAccount @relation(
-    fields: [accountId],
-    references: [id],
-    onDelete: Restrict
-  )
+  account        ChartOfAccount @relation(fields: [accountId], references: [id], onDelete: Restrict)
 
   @@index([journalEntryId])
   @@index([accountId])
@@ -3397,23 +2748,11 @@ model SalesInvoice {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  order          Order @relation(
-    fields: [orderId],
-    references: [id],
-    onDelete: Restrict
-  )
+  order          Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
 
-  customer       Customer? @relation(
-    fields: [customerId],
-    references: [id],
-    onDelete: SetNull
-  )
+  customer       Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
 
   items          SalesInvoiceItem[]
 
@@ -3436,11 +2775,7 @@ model SalesInvoiceItem {
   tax            Decimal  @default(0) @db.Decimal(18, 2)
   total          Decimal  @db.Decimal(18, 2)
 
-  invoice        SalesInvoice @relation(
-    fields: [invoiceId],
-    references: [id],
-    onDelete: Cascade
-  )
+  invoice        SalesInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 
   @@index([invoiceId])
   @@index([productId])
@@ -3465,17 +2800,9 @@ model CustomerLedgerEntry {
 
   entryDate      DateTime        @default(now())
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  customer       Customer @relation(
-    fields: [customerId],
-    references: [id],
-    onDelete: Cascade
-  )
+  customer       Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   @@index([customerId, entryDate])
   @@index([referenceType, referenceId])
@@ -3503,17 +2830,9 @@ model SupplierBill {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  supplier       Supplier @relation(
-    fields: [supplierId],
-    references: [id],
-    onDelete: Restrict
-  )
+  supplier       Supplier @relation(fields: [supplierId], references: [id], onDelete: Restrict)
 
   items          SupplierBillItem[]
   ledgerEntries  SupplierLedgerEntry[]
@@ -3535,11 +2854,7 @@ model SupplierBillItem {
   tax            Decimal  @default(0) @db.Decimal(18, 2)
   total          Decimal  @db.Decimal(18, 2)
 
-  bill           SupplierBill @relation(
-    fields: [billId],
-    references: [id],
-    onDelete: Cascade
-  )
+  bill           SupplierBill @relation(fields: [billId], references: [id], onDelete: Cascade)
 
   @@index([billId])
   @@index([inventoryItemId])
@@ -3565,23 +2880,11 @@ model SupplierLedgerEntry {
 
   entryDate      DateTime        @default(now())
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  supplier       Supplier @relation(
-    fields: [supplierId],
-    references: [id],
-    onDelete: Cascade
-  )
+  supplier       Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
 
-  bill           SupplierBill? @relation(
-    fields: [billId],
-    references: [id],
-    onDelete: SetNull
-  )
+  bill           SupplierBill? @relation(fields: [billId], references: [id], onDelete: SetNull)
 
   @@index([supplierId, entryDate])
   @@index([billId])
@@ -3599,11 +2902,7 @@ model ExpenseCategory {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   expenses       Expense[]
 
@@ -3634,37 +2933,15 @@ model Expense {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  branch         Branch @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: Restrict
-  )
+  branch         Branch @relation(fields: [branchId], references: [id], onDelete: Restrict)
 
-  category       ExpenseCategory @relation(
-    fields: [categoryId],
-    references: [id],
-    onDelete: Restrict
-  )
+  category       ExpenseCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
-  createdBy      User @relation(
-    "ExpenseCreatedBy",
-    fields: [createdById],
-    references: [id],
-    onDelete: Restrict
-  )
+  createdBy      User @relation("ExpenseCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
 
-  approvedBy     User? @relation(
-    "ExpenseApprovedBy",
-    fields: [approvedById],
-    references: [id],
-    onDelete: SetNull
-  )
+  approvedBy     User? @relation("ExpenseApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
 
   @@unique([organizationId, expenseNo])
   @@index([branchId, expenseDate])
@@ -3699,17 +2976,9 @@ model Notification {
   createdAt      DateTime             @default(now())
   updatedAt      DateTime             @updatedAt
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  user           User? @relation(
-    fields: [userId],
-    references: [id],
-    onDelete: Cascade
-  )
+  user           User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, status, createdAt])
   @@index([organizationId, type])
@@ -3740,23 +3009,11 @@ model AuditLog {
 
   createdAt      DateTime @default(now())
 
-  organization   Organization @relation(
-    fields: [organizationId],
-    references: [id],
-    onDelete: Cascade
-  )
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  branch         Branch? @relation(
-    fields: [branchId],
-    references: [id],
-    onDelete: SetNull
-  )
+  branch         Branch? @relation(fields: [branchId], references: [id], onDelete: SetNull)
 
-  user           User? @relation(
-    fields: [userId],
-    references: [id],
-    onDelete: SetNull
-  )
+  user           User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([organizationId, createdAt])
   @@index([entityType, entityId])
